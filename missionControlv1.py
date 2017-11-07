@@ -25,7 +25,7 @@ def mainMenu():
     runmode = 0
     if cancelFlag == 1:
        cancelFlag = 0
-    menuList = {0: [a,"A"], 1:[b,"B"]}
+    menuList = {0: [vesselInfo,"Vessel Info"], 1:[flightInfo,"Flight info"], 2:[orbInfo, "Orbital Info"], 3:[progList,"Program List"]}
     menuIndex1 = 0
     menuIndex2 = 0
     menuBounds1 = [1,0]
@@ -191,6 +191,12 @@ class RotaryEncoder:
 def clearScreen():
     disp.clear()
     disp.display()
+def telemetrySetup():
+#telemetry streams
+ut = conn.add_stream(getattr, conn.space_center, 'ut')
+altitude = conn.add_stream(getattr, vessel.flight(), 'mean_altitude')
+apoapsis = conn.add_stream(getattr, vessel.orbit, 'apoapsis_altitude')
+periapsis = conn.add_stream(getattr, vessel.orbit, 'periapsis_altitude')
 
 #init encoder
 GPIO.setmode(GPIO.BCM)
@@ -247,7 +253,11 @@ instructionQueue = []
 EVENT = threading.Event()
 
 
+
+
 try:
+    conn = krpc.connect(name='Mission Control', address='192.168.0.5', rpc_port=5000, stream_port=5001)
+    vessel = conn.space_center.active_vessel
     mainMenu()
 
 
