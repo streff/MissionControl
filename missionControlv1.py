@@ -56,8 +56,7 @@ def get_bit(x):
     return (x&-x).bit_length()-1
 
 def handle_input(channel, port_capture):
-    global port_data_1A
-    global port_data_1B
+    global port_data_1A, port_data_1B
     if channel == 25:
         portDiff = port_capture ^ port_data_1A 
         pinNum = get_bit(portDiff)
@@ -194,9 +193,16 @@ def clearScreen():
 def telemetrySetup():
 #telemetry streams
 ut = conn.add_stream(getattr, conn.space_center, 'ut')
+#orbital parameters
 altitude = conn.add_stream(getattr, vessel.flight(), 'mean_altitude')
 apoapsis = conn.add_stream(getattr, vessel.orbit, 'apoapsis_altitude')
 periapsis = conn.add_stream(getattr, vessel.orbit, 'periapsis_altitude')
+#flight parameters
+#pressure / atmosphere / radar alt / surface temps?
+#liquid fuel / oxidiser / electricity
+#air / food / waste 
+
+
 
 #init encoder
 GPIO.setmode(GPIO.BCM)
