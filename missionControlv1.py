@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 import datetime
-import feedparser
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_SSD1306
 from PIL import Image
@@ -37,8 +36,6 @@ def mainMenu():
         for x in range(0,len(menuList)):
             draw.text((posx + 10, ((x+1) * line_height)), menuList[x][1], font=font, fill=255)
         draw.ellipse((markerx,markery,markerx+3, markery+3), fill=255)
-        print markerx
-        print markery
         disp.image(image)
         disp.display()
         EVENT.wait(1200)
@@ -95,7 +92,13 @@ def consume_queue():
 def handle_queue(input):
     channel = input[0]
     data = input[1]
-    input_dispatch = [{22:index1, "A4":index1Select},{22:index1, 17:index2, "A4":getWeather, "A5":cancel},{22:index1, 17:index2, "A4":select, "A5":cancel},{"A5":cancel}]
+    input_dispatch = [
+        {22:index1, 17:index2, "A4":index1Select, "A5":index2Select},#main menu
+        {22:index1, 17:index2, "A4":index1Select, "A5":cancel},#ascent
+        {22:index1, 17:index2, "A4":index1Select, "A5":cancel},#flight
+        {22:index1, 17:index2, "A4":index1Select, "A5":cancel},#orbit
+        {22:index1, 17:index2, "A4":index1Select, "A5":}#operations
+    ]
     if channel in input_dispatch[runmode]:
         f = input_dispatch[runmode].get(channel,"")
         print("handle queue")
